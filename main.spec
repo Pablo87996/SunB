@@ -28,7 +28,7 @@ exe = EXE(
     a.zipfiles,
     a.datas,
     [],
-    name='SunB',
+    name='main',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

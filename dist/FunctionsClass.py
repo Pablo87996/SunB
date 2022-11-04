@@ -15,6 +15,7 @@ class Functions:
             backups = open('./db/backups.txt', 'r')
             status = open('./db/status.txt', 'r', encoding='utf-8')
         except:
+            os.mkdir('db')
             backups = open('./db/backups.txt', 'a')
             status = open('./db/status.txt', 'a', encoding='utf-8')
             backups.close()
@@ -54,37 +55,54 @@ class Functions:
 
     def addBackup(self):
         name = input('\nNome: ')
-        src = input('Origem: ')
-        des = input('Destino: ')
-
-        if(src == des):
-            print('A origem não pode ser igual ao destino.')
+        
+        if(name in self.namesList):
+            print('Já existe um backup com esse nome. Tente novamente.')
         else:
-            self.backupsList.append(Backup(name, src, des))
-            
+            src = input('Origem: ')
+            path = input('Destino: ')
+            des = path + '\\' + name
+
             try:
-                self.newBackup(self.backupsList[len(self.backupsList)-1].getOrigin(), self.backupsList[len(self.backupsList)-1].getPath())
-                self.backupsList[len(self.backupsList)-1].setLastModification()
-                self.backupsList[len(self.backupsList)-1].setLastBackup()
-                self.backupsList[len(self.backupsList)-1].updateStatus()
+                hexa = 0
+                for folder in os.listdir(path):
+                    if(name == folder[:-4]):
+                        if(folder[-1] == ']'):
+                            if(int(folder[folder.find('[') +1:folder.find(']')], 16) > hexa):
+                                hexa = int(folder[folder.find('[') +1:folder.find(']')], 16)
+                    elif(name == folder):
+                        des = des + ' [1]'
+                        
+                if(hexa != 0):
+                    des = des[:-2] + hex(hexa+1)[2:].upper() + ']'
 
-                self.statusList.append(self.backupsList[len(self.backupsList)-1].getStatus())
-                self.lastBackupList.append(self.backupsList[len(self.backupsList)-1].getLastBackup())
+                if(src == path):
+                    print('A origem não pode ser igual ao destino.')
+                else:
+                    self.backupsList.append(Backup(name, src, des))
+                
+                    self.newBackup(self.backupsList[len(self.backupsList)-1].getOrigin(), self.backupsList[len(self.backupsList)-1].getPath())
+                    self.backupsList[len(self.backupsList)-1].setLastModification()
+                    self.backupsList[len(self.backupsList)-1].setLastBackup()
+                    self.backupsList[len(self.backupsList)-1].updateStatus()
 
-                if(len(self.statusList) > 0):
-                    self.statusList[len(self.backupsList)-1] = self.backupsList[len(self.backupsList)-1].getStatus()
-                    self.lastBackupList[len(self.backupsList)-1] = self.backupsList[len(self.backupsList)-1].getLastBackup()
+                    self.statusList.append(self.backupsList[len(self.backupsList)-1].getStatus())
+                    self.lastBackupList.append(self.backupsList[len(self.backupsList)-1].getLastBackup())
+                    self.namesList.append(name)
 
-                with open('./db/backups.txt', 'a') as backup:
-                    backup.writelines(name + '\n')
-                    backup.writelines(src + '\n')
-                    backup.writelines(des + '\n')
+                    if(len(self.statusList) > 0):
+                        self.statusList[len(self.backupsList)-1] = self.backupsList[len(self.backupsList)-1].getStatus()
+                        self.lastBackupList[len(self.backupsList)-1] = self.backupsList[len(self.backupsList)-1].getLastBackup()
 
-                self.saveStatus()
-                print('Backup adicionado com sucesso!')
+                    with open('./db/backups.txt', 'a') as backup:
+                        backup.writelines(name + '\n')
+                        backup.writelines(src + '\n')
+                        backup.writelines(des + '\n')
+
+                    self.saveStatus()
+                    print('Backup adicionado com sucesso!')
             except FileNotFoundError:
-                print('Origem não encontrada.')
-                shutil.rmtree(des)
+                print('Caminho não encontrado.')
             
     def newBackup(self, src, des):
         # Verifica se o diretório de destino existe

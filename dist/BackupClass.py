@@ -58,21 +58,27 @@ class Backup:
 
                 if(time.localtime(os.path.getmtime(path)).tm_year > time.localtime(os.path.getmtime(self.origin)).tm_year):
                     self.modification_time = os.path.getmtime(path)
-                elif(time.localtime(os.path.getmtime(path)).tm_mon > time.localtime(os.path.getmtime(self.origin)).tm_mon):
-                    self.modification_time = os.path.getmtime(path)
-                elif(time.localtime(os.path.getmtime(path)).tm_mday > time.localtime(os.path.getmtime(self.origin)).tm_mday):
-                    self.modification_time = os.path.getmtime(path)
-                elif(time.localtime(os.path.getmtime(path)).tm_mday == time.localtime(os.path.getmtime(self.origin)).tm_mday):
-                    if(time.localtime(os.path.getmtime(path)).tm_hour > time.localtime(os.path.getmtime(self.origin)).tm_hour):
+                elif(time.localtime(os.path.getmtime(path)).tm_year == time.localtime(os.path.getmtime(self.origin)).tm_year):
+                    if(time.localtime(os.path.getmtime(path)).tm_mon > time.localtime(os.path.getmtime(self.origin)).tm_mon):
                         self.modification_time = os.path.getmtime(path)
-                    elif(time.localtime(os.path.getmtime(path)).tm_hour == time.localtime(os.path.getmtime(self.origin)).tm_hour):
-                        if(time.localtime(os.path.getmtime(path)).tm_min > time.localtime(os.path.getmtime(self.origin)).tm_min):
+                    elif(time.localtime(os.path.getmtime(path)).tm_mon == time.localtime(os.path.getmtime(self.origin)).tm_mon):
+                        if(time.localtime(os.path.getmtime(path)).tm_mday > time.localtime(os.path.getmtime(self.origin)).tm_mday):
                             self.modification_time = os.path.getmtime(path)
-                        elif(time.localtime(os.path.getmtime(path)).tm_min == time.localtime(os.path.getmtime(self.origin)).tm_min):
-                            if(time.localtime(os.path.getmtime(path)).tm_sec > time.localtime(os.path.getmtime(self.origin)).tm_sec):
+                        elif(time.localtime(os.path.getmtime(path)).tm_mday == time.localtime(os.path.getmtime(self.origin)).tm_mday):
+                            if(time.localtime(os.path.getmtime(path)).tm_hour > time.localtime(os.path.getmtime(self.origin)).tm_hour):
                                 self.modification_time = os.path.getmtime(path)
-                            elif(time.localtime(os.path.getmtime(path)).tm_sec == time.localtime(os.path.getmtime(self.origin)).tm_sec):
-                                self.modification_time = os.path.getmtime(path)
+                            elif(time.localtime(os.path.getmtime(path)).tm_hour == time.localtime(os.path.getmtime(self.origin)).tm_hour):
+                                if(time.localtime(os.path.getmtime(path)).tm_min > time.localtime(os.path.getmtime(self.origin)).tm_min):
+                                    self.modification_time = os.path.getmtime(path)
+                                elif(time.localtime(os.path.getmtime(path)).tm_min == time.localtime(os.path.getmtime(self.origin)).tm_min):
+                                    if(time.localtime(os.path.getmtime(path)).tm_sec > time.localtime(os.path.getmtime(self.origin)).tm_sec):
+                                        self.modification_time = os.path.getmtime(path)
+                                    elif(time.localtime(os.path.getmtime(path)).tm_sec == time.localtime(os.path.getmtime(self.origin)).tm_sec):
+                                        self.modification_time = os.path.getmtime(path)
+                                    else:
+                                        self.modification_time = os.path.getmtime(self.origin)
+                                else:
+                                    self.modification_time = os.path.getmtime(self.origin)
                             else:
                                 self.modification_time = os.path.getmtime(self.origin)
                         else:
@@ -81,6 +87,7 @@ class Backup:
                         self.modification_time = os.path.getmtime(self.origin)
                 else:
                     self.modification_time = os.path.getmtime(self.origin)
+
         local_time = time.localtime(self.modification_time)
 
         self.lastModification_year = local_time.tm_year
@@ -147,21 +154,27 @@ class Backup:
     def updateStatus(self):
         if(self.getModificationYear() > self.getBackupYear()):
             self.backupStatus = 'Não salva'
-        elif(self.getModificationMonth() > self.getBackupMonth()):
-            self.backupStatus = 'Não salva'
-        elif(self.getModificationDay() > self.getBackupDay()):
-            self.backupStatus = 'Não salva'
-        elif(self.getModificationDay() == self.getBackupDay()):
-            if(self.getModificationHour() > self.getBackupHour()):
+        elif(self.getModificationYear() == self.getBackupYear()):
+            if(self.getModificationMonth() > self.getBackupMonth()):
                 self.backupStatus = 'Não salva'
-            elif(self.getModificationHour() == self.getBackupHour()):
-                if(self.getModificationMin() > self.getBackupMin()):
+            elif(self.getModificationMonth() == self.getBackupMonth()):
+                if(self.getModificationDay() > self.getBackupDay()):
                     self.backupStatus = 'Não salva'
-                elif(self.getModificationMin() == self.getBackupMin()):
-                    if(self.getModificationSec() > self.getBackupSec()):
+                elif(self.getModificationDay() == self.getBackupDay()):
+                    if(self.getModificationHour() > self.getBackupHour()):
                         self.backupStatus = 'Não salva'
-                    elif(self.getModificationSec() == self.getBackupSec()):
-                        self.backupStatus = 'Não salva'
+                    elif(self.getModificationHour() == self.getBackupHour()):
+                        if(self.getModificationMin() > self.getBackupMin()):
+                            self.backupStatus = 'Não salva'
+                        elif(self.getModificationMin() == self.getBackupMin()):
+                            if(self.getModificationSec() > self.getBackupSec()):
+                                self.backupStatus = 'Não salva'
+                            elif(self.getModificationSec() == self.getBackupSec()):
+                                self.backupStatus = 'Não salva'
+                            else:
+                                self.backupStatus = 'Salva'
+                        else:
+                            self.backupStatus = 'Salva'
                     else:
                         self.backupStatus = 'Salva'
                 else:
