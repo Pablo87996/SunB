@@ -1,4 +1,3 @@
-from .FunctionsClass import *
 import os, time, datetime
 
 class Backup:
@@ -52,43 +51,50 @@ class Backup:
 
     def setLastModification(self):
         self.modification_time = os.path.getmtime(self.origin)
-        for files in os.walk(self.origin):
-            for file in files[1]:
-                path = os.path.join(files[0], file)
+        lastTime = time.localtime(os.path.getmtime(self.origin))
 
-                if(time.localtime(os.path.getmtime(path)).tm_year > time.localtime(os.path.getmtime(self.origin)).tm_year):
-                    self.modification_time = os.path.getmtime(path)
-                elif(time.localtime(os.path.getmtime(path)).tm_year == time.localtime(os.path.getmtime(self.origin)).tm_year):
-                    if(time.localtime(os.path.getmtime(path)).tm_mon > time.localtime(os.path.getmtime(self.origin)).tm_mon):
-                        self.modification_time = os.path.getmtime(path)
-                    elif(time.localtime(os.path.getmtime(path)).tm_mon == time.localtime(os.path.getmtime(self.origin)).tm_mon):
-                        if(time.localtime(os.path.getmtime(path)).tm_mday > time.localtime(os.path.getmtime(self.origin)).tm_mday):
-                            self.modification_time = os.path.getmtime(path)
-                        elif(time.localtime(os.path.getmtime(path)).tm_mday == time.localtime(os.path.getmtime(self.origin)).tm_mday):
-                            if(time.localtime(os.path.getmtime(path)).tm_hour > time.localtime(os.path.getmtime(self.origin)).tm_hour):
-                                self.modification_time = os.path.getmtime(path)
-                            elif(time.localtime(os.path.getmtime(path)).tm_hour == time.localtime(os.path.getmtime(self.origin)).tm_hour):
-                                if(time.localtime(os.path.getmtime(path)).tm_min > time.localtime(os.path.getmtime(self.origin)).tm_min):
-                                    self.modification_time = os.path.getmtime(path)
-                                elif(time.localtime(os.path.getmtime(path)).tm_min == time.localtime(os.path.getmtime(self.origin)).tm_min):
-                                    if(time.localtime(os.path.getmtime(path)).tm_sec > time.localtime(os.path.getmtime(self.origin)).tm_sec):
-                                        self.modification_time = os.path.getmtime(path)
-                                    elif(time.localtime(os.path.getmtime(path)).tm_sec == time.localtime(os.path.getmtime(self.origin)).tm_sec):
-                                        self.modification_time = os.path.getmtime(path)
-                                    else:
-                                        self.modification_time = os.path.getmtime(self.origin)
-                                else:
-                                    self.modification_time = os.path.getmtime(self.origin)
-                            else:
-                                self.modification_time = os.path.getmtime(self.origin)
-                        else:
-                            self.modification_time = os.path.getmtime(self.origin)
-                    else:
-                        self.modification_time = os.path.getmtime(self.origin)
-                else:
-                    self.modification_time = os.path.getmtime(self.origin)
+        def verify(src, lastTime):
+            for file in os.listdir(src):
+                path = src + '/' + file
 
-        local_time = time.localtime(self.modification_time)
+                if(os.path.isdir(path)):
+                    lastTime = verify(path, lastTime)
+
+                if(time.localtime(os.path.getmtime(path)).tm_year > lastTime.tm_year):
+                    lastTime = time.localtime(os.path.getmtime(path))
+                elif(time.localtime(os.path.getmtime(path)).tm_year == lastTime.tm_year):
+                    if(time.localtime(os.path.getmtime(path)).tm_mon > lastTime.tm_mon):
+                        lastTime = time.localtime(os.path.getmtime(path))
+                    elif(time.localtime(os.path.getmtime(path)).tm_mon == lastTime.tm_mon):
+                        if(time.localtime(os.path.getmtime(path)).tm_mday > lastTime.tm_mday):
+                            lastTime = time.localtime(os.path.getmtime(path))
+                        elif(time.localtime(os.path.getmtime(path)).tm_mday == lastTime.tm_mday):
+                            if(time.localtime(os.path.getmtime(path)).tm_hour > lastTime.tm_hour):
+                                lastTime = time.localtime(os.path.getmtime(path))
+                            elif(time.localtime(os.path.getmtime(path)).tm_hour == lastTime.tm_hour):
+                                if(time.localtime(os.path.getmtime(path)).tm_min > lastTime.tm_min):
+                                    lastTime = time.localtime(os.path.getmtime(path))
+                                elif(time.localtime(os.path.getmtime(path)).tm_min == lastTime.tm_min):
+                                    if(time.localtime(os.path.getmtime(path)).tm_sec > lastTime.tm_sec):
+                                        lastTime = time.localtime(os.path.getmtime(path))
+                                    elif(time.localtime(os.path.getmtime(path)).tm_sec == lastTime.tm_sec):
+                                        lastTime = time.localtime(os.path.getmtime(path))
+                #                     else:
+                #                         self.modification_time = os.path.getmtime(self.origin)
+                #                 else:
+                #                     self.modification_time = os.path.getmtime(self.origin)
+                #             else:
+                #                 self.modification_time = os.path.getmtime(self.origin)
+                #         else:
+                #             self.modification_time = os.path.getmtime(self.origin)
+                #     else:
+                #         self.modification_time = os.path.getmtime(self.origin)
+                # else:
+                #     self.modification_time = os.path.getmtime(self.origin)
+
+            return lastTime
+
+        local_time = verify(self.origin, lastTime)
 
         self.lastModification_year = local_time.tm_year
         self.lastModification_month = local_time.tm_mon
@@ -97,7 +103,7 @@ class Backup:
         self.lastModification_min = local_time.tm_min
         self.lastModification_sec = local_time.tm_sec
         self.lastModification = f'{self.lastModification_day}/{self.lastModification_month}/{self.lastModification_year} - {self.lastModification_hour}:{self.lastModification_min}:{self.lastModification_sec}'
-
+        
     # Last backup
     def getLastBackup(self):
         return self.lastBackupDatetime

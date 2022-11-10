@@ -59,9 +59,9 @@ class Functions:
         if(name in self.namesList):
             print('Já existe um backup com esse nome. Tente novamente.')
         else:
-            src = input('Origem: ')
-            path = input('Destino: ')
-            des = path + '\\' + name
+            src = input('Origem: ').replace('\\', '/')
+            path = input('Destino: ').replace('\\', '/')
+            des = path + '/' + name
 
             try:
                 hexa = 0
@@ -112,16 +112,16 @@ class Functions:
             pass
         
         for file in os.listdir(src):
-            if(os.path.isfile(src + '\\' + file)):
-                shutil.copy2(src + '\\' + file.replace('\'', ''), des)
+            if(os.path.isfile(src + '/' + file)):
+                shutil.copy2(src + '/' + file.replace('\'', ''), des)
             else:
                 try:
-                    os.mkdir(des + '\\' + file)
+                    os.mkdir(des + '/' + file)
                 except:
                     pass
                 
-                newDes = des + '\\' + file
-                newSrc = src + '\\' + file
+                newDes = des + '/' + file
+                newSrc = src + '/' + file
                 self.newBackup(newSrc, newDes)
 
     def backupList(self):
@@ -154,22 +154,26 @@ class Functions:
                         confirmation = str(input('SunB (Backup List):$ '))
                         if(confirmation.lower() == 's'):
                             print('\nCarregando...')
-                            self.newBackup(backup.getOrigin(), backup.getPath())
-                            backup.setLastBackup()
-                            backup.updateStatus()
-                            
-                            self.lastBackupList[self.backupsList.index(backup)] = backup.getLastBackup()
-                            self.statusList[self.backupsList.index(backup)] = backup.getStatus()
-                            self.saveStatus()
-                            print('Backup Concluído.')
+
+                            try:
+                                self.newBackup(backup.getOrigin(), backup.getPath())
+                                backup.setLastBackup()
+                                backup.updateStatus()
+                                
+                                self.lastBackupList[self.backupsList.index(backup)] = backup.getLastBackup()
+                                self.statusList[self.backupsList.index(backup)] = backup.getStatus()
+                                self.saveStatus()
+                                print('Backup Concluído.')
+                            except PermissionError:
+                                print('Erro: Permissão negada.')
                         elif(confirmation.lower() == 'exit'):
                             self.running = False
                             
         return self.running
 
-    def redo_with_write(self, redo_func, path):
-        os.chmod(path, stat.S_IWRITE)
-        redo_func(path)
+    # def redo_with_write(self, redo_func, path):
+    #     os.chmod(path, stat.S_IWRITE)
+    #     redo_func(path)
 
     def saveStatus(self):
         with open('./db/status.txt', 'w', encoding='utf-8') as status:

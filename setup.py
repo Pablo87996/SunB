@@ -8,7 +8,7 @@ build_exe_options = {"packages": ["os"], "excludes": ["tkinter"]}
 
 setup(
     name="SunB",
-    version="1.0.1",
+    version="1.0.2",
     description="A Backup Programmer",
     options={"build_exe": build_exe_options},
     executables=[Executable("main.py", base='Console')],
