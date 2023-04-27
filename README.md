@@ -37,8 +37,8 @@ O SunB é uma aplicação executada no Console, logo, faz-se necessário a utili
 * [Visual Studio Code](https://code.visualstudio.com/) - Editor de texto utilizado
 * [PyInstaller](https://pyinstaller.org/en/stable/) - Pacote Python usado para gerar o arquivo executável
 
-<!-- ## 📌 Versão -->
-<!-- Nós usamos [SemVer](http://semver.org/) para controle de versão. Para as versões disponíveis, observe as [tags neste repositório](https://github.com/Pablo87996/SunB/tags). -->
+## 📌 Versão
+Nós usamos [SemVer](http://semver.org/) para controle de versão. Para as versões disponíveis, observe as [tags neste repositório](https://github.com/Pablo87996/SunB/tags).
 
 ## ✒️ Autor
 
